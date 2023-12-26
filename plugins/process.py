@@ -174,7 +174,7 @@ class ProcessManager:
             #     2: 'smt'
             # }.get(footprint.GetAttributes())
 
-            skip_footprint = exclude_dnp and (footprint.HasProperty('dnp') or footprint.GetValue().upper() == 'DNP')
+            skip_footprint = exclude_dnp and (footprint.HasFieldByName('dnp') or footprint.GetValue().upper() == 'DNP')
 
             if not (footprint.GetAttributes() & pcbnew.FP_EXCLUDE_FROM_POS_FILES) and not skip_footprint:
                 # append unique ID if duplicate footprint designator
@@ -287,12 +287,12 @@ class ProcessManager:
         keys = ['LCSC Part #', 'JLCPCB Part #']
         fallback_keys = ['LCSC Part', 'JLC Part', 'LCSC', 'JLC', 'MPN', 'Mpn', 'mpn']
 
-        if footprint.HasProperty('dnp'):
+        if footprint.HasFieldByName('dnp'):
             return 'DNP'
 
         for key in keys + fallback_keys:
-            if footprint.HasProperty(key):
-                return footprint.GetProperty(key)
+            if footprint.HasFieldByName(key):
+                return footprint.GetFieldByName(key).GetText()
 
     def _get_top_or_bottom_side_override_from_footprint(self, footprint):
         keys = ['JLCPCB Layer Override']
@@ -304,8 +304,8 @@ class ProcessManager:
         }.get(footprint.GetLayer())
 
         for key in keys + fallback_keys:
-            if footprint.HasProperty(key):
-                temp_layer = footprint.GetProperty(key)
+            if footprint.HasFieldByName(key):
+                temp_layer = footprint.GetFieldByName(key).GetText()
                 if (temp_layer[0] == 'b' or temp_layer[0] == 'B'):
                     layer = "bottom"
                     break
@@ -323,8 +323,8 @@ class ProcessManager:
         offset = None
 
         for key in keys + fallback_keys:
-            if footprint.HasProperty(key):
-                offset = footprint.GetProperty(key)
+            if footprint.HasFieldByName(key):
+                offset = footprint.GetFieldByName(key).GetText()
                 break
 
         if offset is None or offset == "":
@@ -342,8 +342,8 @@ class ProcessManager:
         offset = None
 
         for key in keys + fallback_keys:
-            if footprint.HasProperty(key):
-                offset = footprint.GetProperty(key)
+            if footprint.HasFieldByName(key):
+                offset = footprint.GetFieldByName(key).GetText()
                 break
 
         if offset is None or offset == "":
